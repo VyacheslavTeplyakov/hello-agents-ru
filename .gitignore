@@ -167,3 +167,6 @@ test_*.py
 !test_tools.py
 .workbuddy/
 memory/
+
+# Личный файл прогресса (не для публикации)
+PROGRESS.md
