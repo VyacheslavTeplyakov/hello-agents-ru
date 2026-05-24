@@ -1,0 +1,125 @@
+"""Утилиты резюмирования задач."""
+
+from __future__ import annotations
+
+from collections.abc import Callable, Iterator
+from typing import Tuple
+
+from hello_agents import ToolAwareSimpleAgent
+
+from models import SummaryState, TodoItem
+from config import Configuration
+from utils import strip_thinking_tokens
+from services.notes import build_note_guidance
+from services.text_processing import strip_tool_calls
+
+
+class SummarizationService:
+    """Выполняет синхронное и потоковое резюмирование задач."""
+
+    def __init__(
+        self,
+        summarizer_factory: Callable[[], ToolAwareSimpleAgent],
+        config: Configuration,
+    ) -> None:
+        self._agent_factory = summarizer_factory
+        self._config = config
+
+    def summarize_task(self, state: SummaryState, task: TodoItem, context: str) -> str:
+        """Сгенерировать резюме конкретной задачи с помощью агента."""
+
+        prompt = self._build_prompt(state, task, context)
+
+        agent = self._agent_factory()
+        try:
+            response = agent.run(prompt)
+        finally:
+            agent.clear_history()
+
+        summary_text = response.strip()
+        if self._config.strip_thinking_tokens:
+            summary_text = strip_thinking_tokens(summary_text)
+
+        summary_text = strip_tool_calls(summary_text).strip()
+
+        return summary_text or "Информация отсутствует"
+
+    def stream_task_summary(
+        self, state: SummaryState, task: TodoItem, context: str
+    ) -> Tuple[Iterator[str], Callable[[], str]]:
+        """Передавать текст резюме задачи в потоке, собирая полный вывод."""
+
+        prompt = self._build_prompt(state, task, context)
+        remove_thinking = self._config.strip_thinking_tokens
+        raw_buffer = ""
+        visible_output = ""
+        emit_index = 0
+        agent = self._agent_factory()
+
+        def flush_visible() -> Iterator[str]:
+            nonlocal emit_index, raw_buffer
+            while True:
+                start = raw_buffer.find("<think>", emit_index)
+                if start == -1:
+                    if emit_index < len(raw_buffer):
+                        segment = raw_buffer[emit_index:]
+                        emit_index = len(raw_buffer)
+                        if segment:
+                            yield segment
+                    break
+
+                if start > emit_index:
+                    segment = raw_buffer[emit_index:start]
+                    emit_index = start
+                    if segment:
+                        yield segment
+
+                end = raw_buffer.find("</think>", start)
+                if end == -1:
+                    break
+                emit_index = end + len("</think>")
+
+        def generator() -> Iterator[str]:
+            nonlocal raw_buffer, visible_output, emit_index
+            try:
+                for chunk in agent.stream_run(prompt):
+                    raw_buffer += chunk
+                    if remove_thinking:
+                        for segment in flush_visible():
+                            visible_output += segment
+                            if segment:
+                                yield segment
+                    else:
+                        visible_output += chunk
+                        if chunk:
+                            yield chunk
+            finally:
+                if remove_thinking:
+                    for segment in flush_visible():
+                        visible_output += segment
+                        if segment:
+                            yield segment
+                agent.clear_history()
+
+        def get_summary() -> str:
+            if remove_thinking:
+                cleaned = strip_thinking_tokens(visible_output)
+            else:
+                cleaned = visible_output
+
+            return strip_tool_calls(cleaned).strip()
+
+        return generator(), get_summary
+
+    def _build_prompt(self, state: SummaryState, task: TodoItem, context: str) -> str:
+        """Сформировать промпт резюмирования, общий для обоих режимов."""
+
+        return (
+            f"Тема исследования: {state.research_topic}\n"
+            f"Название задачи: {task.title}\n"
+            f"Цель задачи: {task.intent}\n"
+            f"Поисковый запрос: {task.query}\n"
+            f"Контекст задачи:\n{context}\n"
+            f"{build_note_guidance(task)}\n"
+            "Пожалуйста, сначала синхронизируй заметку согласно инструкциям выше, затем верни резюме для пользователя в формате Markdown (следуя шаблону резюме задачи)."
+        )
