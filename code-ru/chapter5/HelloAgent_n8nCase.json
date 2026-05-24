@@ -1,0 +1,350 @@
+{
+  "name": "HelloAgent_n8nCase",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        368,
+        -160
+      ],
+      "id": "46a534e3-3e72-4d0b-9a41-bc5c28834ee4",
+      "name": "Gmail",
+      "alwaysOutputData": false,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "XD1oTN8hEyHzsxBR",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        416,
+        32
+      ],
+      "id": "882131ef-83bc-415f-9430-59d40503c4ae",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "4HqrqZ1DN3LCRp28",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Gmail').item.json.threadId }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        544,
+        32
+      ],
+      "id": "d230cedb-0a48-424f-8b79-4a5e8ae304a7",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        672,
+        32
+      ],
+      "id": "164578ff-9ef8-41ab-b4c3-22f7871c4885",
+      "name": "SerpAPI",
+      "credentials": {
+        "serpApi": {
+          "id": "Nmxsc4WxINf7TGrA",
+          "name": "SerpAPI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Gmail').item.json.From }}",
+        "subject": "=Re:  {{ $('Gmail').item.json.Subject }}",
+        "message": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        928,
+        -160
+      ],
+      "id": "c680c326-e4e1-41df-9f76-520c4b522618",
+      "name": "Send a message",
+      "webhookId": "94ed889e-1e8a-4c90-980f-38cd02c32873",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "XD1oTN8hEyHzsxBR",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "memoryKey": {
+          "__rl": true,
+          "value": "my-dailytime",
+          "mode": "list"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.3,
+      "position": [
+        -16,
+        -160
+      ],
+      "id": "ead1ed07-6e2c-4ba2-9d28-d5adf76540f1",
+      "name": "Simple Vector Store1"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-embedding-exp-03-07"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        48
+      ],
+      "id": "67402e5f-270b-4e31-9b48-4d2a2b60d79e",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "4HqrqZ1DN3LCRp28",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        128,
+        48
+      ],
+      "id": "e55e36f5-8628-496b-acb7-52a4f67b9af2",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n\n  {\n    \"doc_id\": \"work-schedule-001\",\n    \"content\": \"Мое рабочее время — с понедельника по пятницу, с 9:00 до 17:00. Часовой пояс — австралийское восточное стандартное время (AEST).\"\n  },\n  {\n    \"doc_id\": \"off-hours-policy-001\",\n    \"content\": \"В нерабочее время (включая выходные и праздничные дни) я не могу ответить на электронные письма немедленно.\"\n  },\n  {\n    \"doc_id\": \"auto-reply-instruction-001\",\n    \"content\": \"Если письмо получено в нерабочее время, ИИ-ассистент должен сообщить отправителю, что письмо получено и я обработаю и отвечу на него как можно скорее в следующий рабочий день с 9:00 до 17:00.\"\n  }\n\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -240,
+        -160
+      ],
+      "id": "75bc8b52-3ff2-43b3-a6fa-d200c821de4a",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Это инструмент Simple Vector Store2, используемый для запроса моей личной информации, особенно моего рабочего времени и политики ответов на электронные письма. Этот инструмент должен использоваться, когда необходимо определить, является ли текущее время рабочим, или когда нужно сообщить собеседнику, когда я отвечу на письмо.",
+        "memoryKey": {
+          "__rl": true,
+          "value": "my-dailytime",
+          "mode": "list",
+          "cachedResultName": "my-dailytime"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.3,
+      "position": [
+        800,
+        48
+      ],
+      "id": "ad9ba7d0-26b7-499b-9c5a-3d4295f6f7ed",
+      "name": "Simple Vector Store2"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-embedding-exp-03-07"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        800,
+        208
+      ],
+      "id": "9ff48ca5-a7fd-45d6-8ff3-01c86bf63eea",
+      "name": "Embeddings Google Gemini1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "4HqrqZ1DN3LCRp28",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=# Контекстная информация\n- Текущее время: {{ new Date().toLocaleString('en-AU', { timeZone: 'Australia/Sydney', hour12: false }) }} (время в Сиднее, Австралия)\n- Отправитель: {{ $json.From }}\n- Тема: {{ $json.Subject }}\n- Текст письма: {{ $json.snippet }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# Роль и цель\nВы — круглосуточно дежурный, профессиональный и эффективный ИИ-помощник по электронной почте. Ваша задача: при первой возможности сделать все возможное, чтобы ответить на все вопросы в письмах, используя публичную информацию, и добавить напоминание о контекстном статусе в начале ответов на основе моего рабочего графика.\n\n# Контекстная информация\n- Текущее время: {{ new Date().toLocaleString('en-AU', { timeZone: 'Australia/Sydney', hour12: false }) }} (время в Сиднее, Австралия)\n- Информация об электронном письме находится во входных данных.\n\n# Доступные инструменты\n- Simple Vector Store2: Используется для запроса моего точного рабочего времени (например, с понедельника по пятницу, с 9:00 до 17:00).\n- SerpAPI: **[Основной источник информации]** Отдавайте приоритет использованию этого инструмента для поиска в Интернете, чтобы ответить на конкретные вопросы в письмах.\n\n# Шаги выполнения\n1.  **Анализ вопроса**: Сначала внимательно прочитайте содержание письма и выделите ключевой вопрос отправителя.\n\n2.  **Параллельный сбор информации**: Выполните одновременно следующие две операции для сбора информации:\n    а. Используйте инструмент `SerpAPI`, чтобы найти в Интернете ответы на вопросы отправителя.\n    б. Используйте инструмент `Simple Vector Store2`, чтобы получить мое точное рабочее время.\n\n3.  **Черновик основного ответа**: На основе собранной с помощью `SerpAPI` информации четко и прямо ответьте на вопрос отправителя. Эта часть будет служить телом ответа на письмо.\n\n4.  **Добавление префикса статуса и объединение**:\n    а. Сравните \"Текущее время\" с рабочим временем, полученным из инструмента.\n    б. **Если сейчас \"Нерабочее время\"** : Создайте префикс с напоминанием о статусе. Этот префикс **должен включать** конкретное рабочее время, полученное из `Simple Vector Store2`.\n        * **Пример префикса**: \"Здравствуйте, спасибо за ваше письмо. Вы связались со мной в мое нерабочее время (мое рабочее время: [вставьте сюда полученное рабочее время]). Я лично ознакомлюсь с этим письмом в следующий рабочий день. Тем временем, вот предварительный ответ, найденный для вас на основе открытых источников:**<br><br>---<br><br>**\"\n    в. **Если сейчас \"Рабочее время\"**: Используйте простое приветствие.\n        * **Пример префикса**: \"Здравствуйте, касательно вашего вопроса, ответ следующий:**<br><br>---<br><br>**\"\n    г. Объедините сгенерированный префикс и ваш черновик основного ответа (результат шага 3), чтобы сформировать окончательное тело письма.\n\n5.  **Форматированный вывод**: Вы должны вывести окончательное содержание письма строго в формате JSON. Формат следующий, не добавляйте никаких дополнительных объяснений или текста:\n    {\n      \"shouldReply\": true,\n      \"subject\": \"Re: [Оригинальная тема письма]\",\n      \"body\": \"[Здесь находится объединенное, полное тело ответа на письмо, **все переводы строк должны использовать HTML-теги <br>**]\"\n    }\n\n# Правила и ограничения\n- **Всегда пытайтесь ответить первыми**: В любое время вашей основной задачей является использование `SerpAPI` для предоставления ценных ответов пользователям.\n- **Обязательно заявляйте о статусе**: Если вы отвечаете в нерабочее время, вы должны четко заявить об этом в начале письма и приложить мое точное рабочее время.\n- **Источники информации должны быть точными**: Рабочее время должно строго соответствовать результатам из `Simple Vector Store2`; ответы на вопросы в основном берутся из `SerpAPI`, не выдумывайте информацию.\n- **Формат вывода**: **В конечном выходном JSON все переводы строк в поле `body` должны использовать теги `<br>`, а не `\\n`.**"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        576,
+        -160
+      ],
+      "id": "b5e90bc0-1d53-4bea-9300-b9982ff5b9b4",
+      "name": "AI Agent1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SerpAPI": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Simple Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Simple Vector Store1",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Simple Vector Store1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Vector Store2": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Simple Vector Store2",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "4b54e880-ce89-48af-bc22-d753d162b460",
+  "meta": {
+    "instanceId": "87f6aa8e755e8ea119eeb2e3b3db6a7d58c6b1d2109e9b94ec4ef98f2449f77d"
+  },
+  "id": "b8xRsyXsQr5XE16V",
+  "tags": []
+}

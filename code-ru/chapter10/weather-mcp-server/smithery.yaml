@@ -1,0 +1,28 @@
+name: weather-mcp-server
+displayName: Weather MCP Server
+description: MCP-сервер запроса погоды в реальном времени на основе фреймворка HelloAgents
+version: 1.0.0
+author: HelloAgents Team
+homepage: https://github.com/yourusername/weather-mcp-server
+license: MIT
+categories:
+  - weather
+  - data
+tags:
+  - weather
+  - real-time
+  - helloagents
+  - wttr
+runtime: container
+build:
+  dockerfile: Dockerfile
+  dockerBuildPath: .
+startCommand:
+  type: http
+tools:
+  - name: get_weather
+    description: Получить текущую погоду для города
+  - name: list_supported_cities
+    description: Список всех поддерживаемых городов
+  - name: get_server_info
+    description: Получить информацию о сервере
