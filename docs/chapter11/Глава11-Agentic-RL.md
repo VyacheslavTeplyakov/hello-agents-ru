@@ -38,17 +38,17 @@
 ```mermaid
 flowchart LR
     subgraph pre["Предобучение (Pretraining)"]
-        A["📚 Огромные текстовые\nданные (ТБ-уровень)"] --> B["Предобучение\nPretraining"] --> C(["Базовая языковая\nмодель — Base Model"])
+        A["📚 Огромные текстовые<br/>данные (ТБ-уровень)"] --> B["Предобучение<br/>Pretraining"] --> C(["Базовая языковая<br/>модель — Base Model"])
     end
     subgraph post["Пост-обучение (Post-training)"]
         subgraph prep["Подготовка данных и модели"]
-            C --> D["SFT: обучение\nформату диалога"] --> E(["SFT-модель"])
-            C --> F["RM: обучение\nпредпочтениям людей"] --> G(["Модель вознаграждения"])
+            C --> D["SFT: обучение<br/>формату диалога"] --> E(["SFT-модель"])
+            C --> F["RM: обучение<br/>предпочтениям людей"] --> G(["Модель вознаграждения"])
         end
         subgraph rl["RL-выравнивание"]
-            E -->|"PPO: начальная\nстратегия"| H["RL PPO/DPO/GRPO"]
-            G -->|"Сигнал\nвознаграждения"| H
-            H --> I(["Выровненная модель\n— Aligned Model"])
+            E -->|"PPO: начальная<br/>стратегия"| H["RL PPO/DPO/GRPO"]
+            G -->|"Сигнал<br/>вознаграждения"| H
+            H --> I(["Выровненная модель<br/>— Aligned Model"])
         end
     end
 ```
@@ -152,21 +152,21 @@ Agentic RL стремится наделить LLM-агентов шестью �
 
 ```mermaid
 flowchart TD
-    center["🧠 Agentic RL\nШесть ключевых способностей"]
+    center["🧠 Agentic RL<br/>Шесть ключевых способностей"]
 
-    center --> r["🔍 Reasoning\n(Рассуждение)"]
-    center --> t["🔧 Tool Use\n(Использование инструментов)"]
-    center --> m["💾 Memory\n(Память)"]
-    center --> p["📋 Planning\n(Планирование)"]
-    center --> s["🔄 Self-Improvement\n(Самосовершенствование)"]
-    center --> perc["👁️ Perception\n(Восприятие)"]
+    center --> r["🔍 Reasoning<br/>(Рассуждение)"]
+    center --> t["🔧 Tool Use<br/>(Использование инструментов)"]
+    center --> m["💾 Memory<br/>(Память)"]
+    center --> p["📋 Planning<br/>(Планирование)"]
+    center --> s["🔄 Self-Improvement<br/>(Самосовершенствование)"]
+    center --> perc["👁️ Perception<br/>(Восприятие)"]
 
-    r --> r2["Многошаговый\nлогический вывод"]
-    t --> t2["Вызов API\nи инструментов"]
-    m --> m2["Долгосрочное\nхранение информации"]
-    p --> p2["Планирование\nпоследовательностей действий"]
-    s --> s2["Саморефлексия\nи оптимизация"]
-    perc --> perc2["Мультимодальное\nпонимание"]
+    r --> r2["Многошаговый<br/>логический вывод"]
+    t --> t2["Вызов API<br/>и инструментов"]
+    m --> m2["Долгосрочное<br/>хранение информации"]
+    p --> p2["Планирование<br/>последовательностей действий"]
+    s --> s2["Саморефлексия<br/>и оптимизация"]
+    perc --> perc2["Мультимодальное<br/>понимание"]
 ```
 
 *Рисунок 11.2 Шесть ключевых способностей Agentic RL*
@@ -194,31 +194,31 @@ flowchart TD
 ```mermaid
 flowchart TD
     subgraph interface["Унифицированный интерфейс"]
-        tool["RLTrainingTool\nrl_training_tool.py"]
+        tool["RLTrainingTool<br/>rl_training_tool.py"]
     end
 
-    tool --> act_load["action=load_dataset\nЗагрузка данных"]
-    tool --> act_train["action=train\nОбучение модели"]
-    tool --> act_reward["action=create_reward\nСоздание функции вознаграждения"]
-    tool --> act_eval["action=evaluate\nОценка модели"]
+    tool --> act_load["action=load_dataset<br/>Загрузка данных"]
+    tool --> act_train["action=train<br/>Обучение модели"]
+    tool --> act_reward["action=create_reward<br/>Создание функции вознаграждения"]
+    tool --> act_eval["action=evaluate<br/>Оценка модели"]
 
     subgraph trainers["Уровень тренеров"]
-        act_train --> sft["SFTTrainerWrapper\nОбучение с учителем"]
-        act_train --> grpo["GRPOTrainerWrapper\nОбучение с подкреплением"]
-        act_train --> lora["Конфигурация LoRA\nЭффективная тонкая настройка"]
+        act_train --> sft["SFTTrainerWrapper<br/>Обучение с учителем"]
+        act_train --> grpo["GRPOTrainerWrapper<br/>Обучение с подкреплением"]
+        act_train --> lora["Конфигурация LoRA<br/>Эффективная тонкая настройка"]
     end
 
     subgraph datasets["Уровень данных"]
-        act_load --> gsm["GSM8KDataset\nКласс датасета"]
-        act_load --> sft_ds["create_sft_dataset\nSFT-формат"]
-        act_load --> rl_ds["create_rl_dataset\nRL-формат"]
+        act_load --> gsm["GSM8KDataset<br/>Класс датасета"]
+        act_load --> sft_ds["create_sft_dataset<br/>SFT-формат"]
+        act_load --> rl_ds["create_rl_dataset<br/>RL-формат"]
     end
 
     subgraph rewards["Уровень функций вознаграждения"]
-        act_reward --> math_rf["MathRewardFunction\nБазовый класс"]
-        act_reward --> acc_r["AccuracyReward\nВознаграждение за точность"]
-        act_reward --> len_r["LengthPenaltyReward\nШтраф за длину"]
-        act_reward --> step_r["StepReward\nПошаговое вознаграждение"]
+        act_reward --> math_rf["MathRewardFunction<br/>Базовый класс"]
+        act_reward --> acc_r["AccuracyReward<br/>Вознаграждение за точность"]
+        act_reward --> len_r["LengthPenaltyReward<br/>Штраф за длину"]
+        act_reward --> step_r["StepReward<br/>Пошаговое вознаграждение"]
     end
 ```
 
@@ -345,13 +345,13 @@ GSM8K (Grade School Math 8K)<sup>[4]</sup> — высококачественн�
 
 ```mermaid
 flowchart TD
-    src["Исходный формат\nquestion + answer"]
+    src["Исходный формат<br/>question + answer"]
 
-    src --> sft_fmt["SFT-формат\nprompt + completion"]
-    src --> rl_fmt["RL-формат\nprompt + ground_truth"]
+    src --> sft_fmt["SFT-формат<br/>prompt + completion"]
+    src --> rl_fmt["RL-формат<br/>prompt + ground_truth"]
 
-    sft_fmt --> sft_use["Содержит полный процесс решения\n— используется для обучения с учителем"]
-    rl_fmt --> rl_use["Содержит только итоговый ответ\n— используется для обучения с подкреплением"]
+    sft_fmt --> sft_use["Содержит полный процесс решения<br/>— используется для обучения с учителем"]
+    rl_fmt --> rl_use["Содержит только итоговый ответ<br/>— используется для обучения с подкреплением"]
 ```
 
 *Рисунок 11.4 Преобразование форматов данных GSM8K*
@@ -449,20 +449,20 @@ HelloAgents предоставляет три встроенных функци�
 ```mermaid
 flowchart TD
     subgraph rf["Функции вознаграждения"]
-        acc["AccuracyReward\nВознаграждение за точность"]
-        len["LengthPenaltyReward\nШтраф за длину"]
-        step["StepReward\nПошаговое вознаграждение"]
+        acc["AccuracyReward<br/>Вознаграждение за точность"]
+        len["LengthPenaltyReward<br/>Штраф за длину"]
+        step["StepReward<br/>Пошаговое вознаграждение"]
     end
 
     subgraph combo["Стратегии комбинирования"]
-        c1["Точность + Штраф за длину\n→ поощряет краткость"]
-        c2["Точность + Пошаговое\n→ поощряет детальное рассуждение"]
-        c3["Тройной баланс\n→ комплексная оптимизация"]
+        c1["Точность + Штраф за длину<br/>→ поощряет краткость"]
+        c2["Точность + Пошаговое<br/>→ поощряет детальное рассуждение"]
+        c3["Тройной баланс<br/>→ комплексная оптимизация"]
     end
 
-    acc --> acc2["Правильный ответ: +1\nНеправильный ответ: 0"]
-    len --> len2["На основе точности:\nштрафует за слишком длинные ответы"]
-    step --> step2["На основе точности:\nпоощряет чёткие шаги"]
+    acc --> acc2["Правильный ответ: +1<br/>Неправильный ответ: 0"]
+    len --> len2["На основе точности:<br/>штрафует за слишком длинные ответы"]
+    step --> step2["На основе точности:<br/>поощряет чёткие шаги"]
 ```
 
 *Рисунок 11.5 Дизайн функций вознаграждения*
@@ -1028,11 +1028,11 @@ print(response)
 ```mermaid
 flowchart LR
     subgraph top["Модели"]
-        pre["Предобученная модель\nQwen3-0.6B"] -->|"SFT-обучение"| sft["SFT-модель\nИзучает формат и базовое рассуждение"] -->|"Обучение с подкреплением"| rl["RL-модель\nОптимизирует стратегию рассуждения"]
+        pre["Предобученная модель<br/>Qwen3-0.6B"] -->|"SFT-обучение"| sft["SFT-модель<br/>Изучает формат и базовое рассуждение"] -->|"Обучение с подкреплением"| rl["RL-модель<br/>Оптимизирует стратегию рассуждения"]
     end
 
     subgraph bottom["Эффект обучения"]
-        out1["Хаотичный вывод\nбез структуры"] -->|"SFT"| out2["Структурированный вывод\nс чёткими шагами"] -->|"RL"| out3["Оптимизированное рассуждение\nповышенная точность"]
+        out1["Хаотичный вывод<br/>без структуры"] -->|"SFT"| out2["Структурированный вывод<br/>с чёткими шагами"] -->|"RL"| out3["Оптимизированное рассуждение<br/>повышенная точность"]
     end
 ```
 
@@ -1296,13 +1296,13 @@ $$
 flowchart LR
     subgraph grpo_flow["Процесс обучения GRPO"]
         direction LR
-        gpm["Policy Model"] --> ggen["Генерация\nгруппы сэмплов"] --> gcalc["Вычисление\nвознаграждений"] --> grel["Вычисление\nгрупповых относит.\nвознаграждений"] --> gupd["Обновление Policy"]
+        gpm["Policy Model"] --> ggen["Генерация<br/>группы сэмплов"] --> gcalc["Вычисление<br/>вознаграждений"] --> grel["Вычисление<br/>групповых относит.<br/>вознаграждений"] --> gupd["Обновление Policy"]
         gupd --> gpm
     end
 
     subgraph ppo_flow["Процесс обучения PPO"]
         direction LR
-        ppm["Policy Model"] --> pgen["Генерация\nсэмплов"] --> pcalc["Вычисление\nвознаграждений"] --> pval["Value Model\nоценка V"] --> padv["Вычисление\nпреимущества A"] --> pupdp["Обновление Policy"]
+        ppm["Policy Model"] --> pgen["Генерация<br/>сэмплов"] --> pcalc["Вычисление<br/>вознаграждений"] --> pval["Value Model<br/>оценка V"] --> padv["Вычисление<br/>преимущества A"] --> pupdp["Обновление Policy"]
         padv --> pupdv["Обновление Value"]
         pupdp --> ppm
         pupdv --> pval
@@ -1894,12 +1894,12 @@ for group_name, results in step_groups.items():
 
 ```mermaid
 flowchart TD
-    dir{{"🎯 Направление\nулучшения"}}
+    dir{{"🎯 Направление<br/>улучшения"}}
 
-    dir -->|"Ошибки\nвычисления"| comp["Улучшить\nвычислительные способности"]
-    dir -->|"Ошибки\nрассуждения"| reason["Улучшить\nмногошаговое рассуждение"]
-    dir -->|"Проблемы\nс вознаграждением"| reward["Улучшить\nфункции вознаграждения"]
-    dir -->|"Общие\nнедостатки"| scale["Масштабировать\nобучение"]
+    dir -->|"Ошибки<br/>вычисления"| comp["Улучшить<br/>вычислительные способности"]
+    dir -->|"Ошибки<br/>рассуждения"| reason["Улучшить<br/>многошаговое рассуждение"]
+    dir -->|"Проблемы<br/>с вознаграждением"| reward["Улучшить<br/>функции вознаграждения"]
+    dir -->|"Общие<br/>недостатки"| scale["Масштабировать<br/>обучение"]
 
     comp --> model["🤖 Обучение модели"]
     reason --> model
@@ -1921,7 +1921,7 @@ flowchart TD
 
 ```mermaid
 flowchart LR
-    A["📦 Подготовка\nданных"] --> B["🎓 SFT\nобучение"] --> C["📊 SFT\nоценка"] --> D["🔄 GRPO\nобучение"] --> E["📊 GRPO\nоценка"] --> F["🚀 Развёртывание\nмодели"]
+    A["📦 Подготовка<br/>данных"] --> B["🎓 SFT<br/>обучение"] --> C["📊 SFT<br/>оценка"] --> D["🔄 GRPO<br/>обучение"] --> E["📊 GRPO<br/>оценка"] --> F["🚀 Развёртывание<br/>модели"]
 ```
 
 *Рисунок 11.9 Сквозной пайплайн обучения*

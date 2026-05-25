@@ -43,9 +43,9 @@ graph TB
     end
 
     subgraph agents["Слой агентов (HelloAgents)"]
-        PLANNER["TODO Planner\n(Агент планирования)"]
-        SUMMARIZER["Task Summarizer\n(Агент суммаризации)"]
-        REPORTER["Report Writer\n(Агент отчётов)"]
+        PLANNER["TODO Planner<br/>(Агент планирования)"]
+        SUMMARIZER["Task Summarizer<br/>(Агент суммаризации)"]
+        REPORTER["Report Writer<br/>(Агент отчётов)"]
         SEARCH["SearchTool"]
         NOTE["NoteTool"]
     end
@@ -311,16 +311,16 @@ TODO-управляемый исследовательский процесс в
 
 ```mermaid
 flowchart LR
-    Input["Пользователь вводит\nтему исследования"]
-    Planner["TODO Planner\nИнтеллектуальный\nпланировщик"]
-    TodoList["Список подзадач\nJSON"]
-    Executor["Task Executor\nИсполнитель задач"]
-    Search["Поисковый\nдвижок"]
-    Results["Результаты\nпоиска"]
-    Summary["Task Summarizer\nРезюме задачи\nMarkdown"]
-    Decision{Все задачи\nвыполнены?}
-    Reporter["Report Writer\nГенератор отчётов"]
-    Final["Финальный\nотчёт\nMarkdown"]
+    Input["Пользователь вводит<br/>тему исследования"]
+    Planner["TODO Planner<br/>Интеллектуальный<br/>планировщик"]
+    TodoList["Список подзадач<br/>JSON"]
+    Executor["Task Executor<br/>Исполнитель задач"]
+    Search["Поисковый<br/>движок"]
+    Results["Результаты<br/>поиска"]
+    Summary["Task Summarizer<br/>Резюме задачи<br/>Markdown"]
+    Decision{Все задачи<br/>выполнены?}
+    Reporter["Report Writer<br/>Генератор отчётов"]
+    Final["Финальный<br/>отчёт<br/>Markdown"]
 
     Input --> Planner
     Planner --> TodoList
@@ -918,24 +918,24 @@ class DeepResearchAgent:
 
 ```mermaid
 flowchart LR
-    Planner["TODO Planner\nСпециалист по\nпланированию исследований"]
-    TaskList["Генерация\nсписка подзадач"]
+    Planner["TODO Planner<br/>Специалист по<br/>планированию исследований"]
+    TaskList["Генерация<br/>списка подзадач"]
     
     subgraph Task1["Подзадача 1"]
-        S1["SearchTool\nПоиск"] --> Sum1["Task Summarizer\nСуммаризация"] --> N1["NoteTool\nСохранение"]
+        S1["SearchTool<br/>Поиск"] --> Sum1["Task Summarizer<br/>Суммаризация"] --> N1["NoteTool<br/>Сохранение"]
     end
     
     subgraph Task2["Подзадача 2"]
-        S2["SearchTool\nПоиск"] --> Sum2["Task Summarizer\nСуммаризация"] --> N2["NoteTool\nСохранение"]
+        S2["SearchTool<br/>Поиск"] --> Sum2["Task Summarizer<br/>Суммаризация"] --> N2["NoteTool<br/>Сохранение"]
     end
     
     subgraph Task3["Подзадача 3"]
-        S3["SearchTool\nПоиск"] --> Sum3["Task Summarizer\nСуммаризация"] --> N3["NoteTool\nСохранение"]
+        S3["SearchTool<br/>Поиск"] --> Sum3["Task Summarizer<br/>Суммаризация"] --> N3["NoteTool<br/>Сохранение"]
     end
     
-    Collect["Сбор всех\nрезюме"]
-    Reporter["Report Writer\nСпециалист по\nотчётам"]
-    Read["NoteTool\nЧтение заметок"]
+    Collect["Сбор всех<br/>резюме"]
+    Reporter["Report Writer<br/>Специалист по<br/>отчётам"]
+    Read["NoteTool<br/>Чтение заметок"]
     
     Planner --> TaskList
     TaskList --> Task1
@@ -1730,30 +1730,30 @@ class SearchService:
 
 ```mermaid
 flowchart LR
-    Request["Получен запрос\nна поиск"]
-    Config["Читаем конфигурацию\nSEARCH_API"]
-    Check["Проверяем\nконфигурацию"]
+    Request["Получен запрос<br/>на поиск"]
+    Config["Читаем конфигурацию<br/>SEARCH_API"]
+    Check["Проверяем<br/>конфигурацию"]
 
     subgraph Engines["Доступные движки"]
-        Hybrid["hybrid → Гибридный режим\nИнтеллектуальный выбор"]
-        Advanced["advanced → Advanced-режим\nОбъединение движков"]
-        SearXNG["searxng → SearXNG\nТребует адрес сервера"]
-        SerpAPI["serpapi → SerpAPI\nТребует API-ключ"]
-        Perplexity["perplexity → Perplexity\nТребует API-ключ"]
-        DuckDuckGo["duckduckgo → DuckDuckGo\nБез API-ключа"]
-        Tavily["tavily → Tavily\nТребует API-ключ"]
+        Hybrid["hybrid → Гибридный режим<br/>Интеллектуальный выбор"]
+        Advanced["advanced → Advanced-режим<br/>Объединение движков"]
+        SearXNG["searxng → SearXNG<br/>Требует адрес сервера"]
+        SerpAPI["serpapi → SerpAPI<br/>Требует API-ключ"]
+        Perplexity["perplexity → Perplexity<br/>Требует API-ключ"]
+        DuckDuckGo["duckduckgo → DuckDuckGo<br/>Без API-ключа"]
+        Tavily["tavily → Tavily<br/>Требует API-ключ"]
     end
 
     Execute["Выполнить поиск"]
     ResultCheck{Проверка результата}
-    Fallback{"Есть резервный\nдвижок?"}
-    FallbackDDG["Использовать DuckDuckGo\nкак запасной вариант"]
-    ErrorMsg["Вернуть\nсообщение об ошибке"]
+    Fallback{"Есть резервный<br/>движок?"}
+    FallbackDDG["Использовать DuckDuckGo<br/>как запасной вариант"]
+    ErrorMsg["Вернуть<br/>сообщение об ошибке"]
     Process["Обработать результат"]
-    Dedup["Дедупликация\nудаление дублей URL"]
-    LimitTokens["Ограничение токенов\nконтроль длины контента"]
-    Format["Форматирование\nунифицированный формат"]
-    Return["Вернуть\nрезультаты поиска"]
+    Dedup["Дедупликация<br/>удаление дублей URL"]
+    LimitTokens["Ограничение токенов<br/>контроль длины контента"]
+    Format["Форматирование<br/>унифицированный формат"]
+    Return["Вернуть<br/>результаты поиска"]
 
     Request --> Config --> Check
     Check --> Engines
@@ -1846,9 +1846,9 @@ class SearchService:
 ```mermaid
 graph TB
     subgraph VueComponents["Vue-компоненты"]
-        ResearchModal["ResearchModal.vue\nГлавный модальный компонент"]
-        ProgressBar["ProgressBar.vue\nКомпонент прогресс-бара"]
-        MDRenderer["MarkdownRenderer.vue\nRender-компонент Markdown"]
+        ResearchModal["ResearchModal.vue<br/>Главный модальный компонент"]
+        ProgressBar["ProgressBar.vue<br/>Компонент прогресс-бара"]
+        MDRenderer["MarkdownRenderer.vue<br/>Render-компонент Markdown"]
         ResearchModal -->|использует| ProgressBar
         ResearchModal -->|использует| MDRenderer
     end
@@ -1856,10 +1856,10 @@ graph TB
     subgraph FullscreenModal["Полноэкранный диалог (Modal Overlay)"]
         subgraph ModalContainer["Модальный контейнер (Modal Container)"]
             direction LR
-            Header["Шапка (Header)\nТема: 'Что такое Datawhale?'"]
-            Progress["Область прогресса (Progress Section)\nПрогресс: ██████ 80%\nПрогресс: Генерация отчёта..."]
-            Content["Область контента (Content Section)\nMarkdown-содержимое:\n• Исследовательский план\n• Резюме задач\n• Итоговый отчёт"]
-            Footer["Подвал (Footer)\nСтатус: Исследование... / Завершено"]
+            Header["Шапка (Header)<br/>Тема: 'Что такое Datawhale?'"]
+            Progress["Область прогресса (Progress Section)<br/>Прогресс: ██████ 80%<br/>Прогресс: Генерация отчёта..."]
+            Content["Область контента (Content Section)<br/>Markdown-содержимое:<br/>• Исследовательский план<br/>• Резюме задач<br/>• Итоговый отчёт"]
+            Footer["Подвал (Footer)<br/>Статус: Исследование... / Завершено"]
         end
     end
 ```
